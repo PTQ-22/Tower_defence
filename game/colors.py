@@ -1,0 +1,13 @@
+class ColorsRGB:
+    BLACK = (0, 0, 0)
+    GREY = (40, 40, 40)
+    WHITE = (255, 255, 255)
+    ALMOST_WHITE = (230, 230, 230)
+    MAGENTA = (255, 0, 255)
+    GREEN = (29, 186, 11)
+    DARK_GREEN = (29, 120, 11)
+    RED = (255, 0, 0)
+    DARK_RED = (155, 0, 0)
+    BLUE = (0, 0, 200)
+    YELLOW = (255, 242, 0)
+    BROWN = (69, 51, 3)
