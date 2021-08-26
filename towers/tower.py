@@ -10,7 +10,7 @@ class Tower:
 
     add_button = Button(1460, 420, 180, 20, ColorsRGB.GREEN, text="BUY $10")
     RANGE = 150
-    DAMAGE = 0.06
+    DAMAGE = 0.05
     PRICE = 10
 
     def __init__(self, x, y):
@@ -118,7 +118,7 @@ class Tower:
                     return False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     rect_index = cls.give_clicked_rect(pos, grid)
-                    if rect_index and grid.array_2d[rect_index[1]][rect_index[0]] in ['.', 'p']:
+                    if rect_index and grid.array_2d[rect_index[1]][rect_index[0]] in [".", "p"]:
                         tower_x = rect_index[0] * grid.square_size
                         tower_y = rect_index[1] * grid.square_size
                         return [rect_index, tower_x, tower_y]

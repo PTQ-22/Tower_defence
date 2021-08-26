@@ -4,7 +4,7 @@ pygame.init()
 
 
 class Button:
-    def __init__(self, x, y, width, height, color, text='', font_size=20, border=True, font_color=ColorsRGB.BLACK):
+    def __init__(self, x, y, width, height, color, text="", font_size=20, border=True, font_color=ColorsRGB.BLACK):
         self.x = x
         self.y = y
         self.width = width
@@ -24,8 +24,8 @@ class Button:
                 self.x - self.border_size, self.y - self.border_size, self.width + self.border_size * 2,
                 self.height + self.border_size * 2), 0, 3)
         pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height), 0, 3)
-        if self.text != '':
-            font = pygame.font.Font('freesansbold.ttf', self.font_size)
+        if self.text != "":
+            font = pygame.font.Font("freesansbold.ttf", self.font_size)
             text = font.render(self.text, True, self.font_color)
             win.blit(text,
                      (self.x + (self.width / 2 - text.get_width() / 2),

@@ -6,7 +6,7 @@ from levels.level_class import Level
 
 class Menu:
 
-    level_1_button = Button(650, 400, 400, 100, ColorsRGB.GREEN, text='START', font_size=40)
+    level_1_button = Button(650, 400, 400, 100, ColorsRGB.GREEN, text="START", font_size=40)
 
     @classmethod
     def draw(cls, win):
