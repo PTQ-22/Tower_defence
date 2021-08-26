@@ -10,7 +10,7 @@ class Tower:
 
     add_button = Button(1460, 420, 180, 20, ColorsRGB.GREEN, text="BUY $10")
     RANGE = 150
-    DAMAGE = 0.05
+    DAMAGE = 0.1 
     PRICE = 10
 
     def __init__(self, x, y):

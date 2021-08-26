@@ -4,7 +4,7 @@ from game.colors import ColorsRGB
 
 class Enemy:
 
-    MOVE_SPEED = 1
+    MOVE_SPEED = 2
     START_X = 40
 
     def __init__(self, full_path):

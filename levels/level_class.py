@@ -22,8 +22,9 @@ class Level:
     phase = "prepare"
 
     money = 30
-    lives = 5
-    REWARD = 2
+    lives = 50
+    REWARD = 5
+    wave_num = 0
 
     @classmethod
     def draw(cls, win):
@@ -42,6 +43,9 @@ class Level:
         cls.grid.draw(win)
 
         if cls.phase == "battle":
+            Button(1430, 40, 240, 20, ColorsRGB.GREY,
+                   text=f"WAVE: {cls.wave_num}",
+                   font_size=33, border=False, font_color=ColorsRGB.YELLOW).draw(win)
             Button(1430, 140, 240, 20, ColorsRGB.GREY,
                    text=f"Living enemies: {len(cls.enemies)}",
                    font_size=25, border=False, font_color=ColorsRGB.DARK_RED).draw(win)
@@ -122,6 +126,7 @@ class Level:
             if len(waves_of_enemies) > 0:
                 cls.waiting_enemies = waves_of_enemies[0]()
                 waves_of_enemies.pop(0)
+                cls.wave_num += 1
             else:
                 cls.phase = "won"
 
@@ -130,5 +135,6 @@ class Level:
         for waiting_enemy in cls.waiting_enemies:
             is_ready = waiting_enemy.waiting()
             if is_ready:
+                print("T")
                 cls.enemies.append(Enemy(cls.grid.get_path()))
                 cls.waiting_enemies.remove(waiting_enemy)
