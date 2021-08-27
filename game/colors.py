@@ -1,6 +1,7 @@
 class ColorsRGB:
     BLACK = (0, 0, 0)
     GREY = (40, 40, 40)
+    LIGHT_GREY = (100, 100, 100)
     WHITE = (255, 255, 255)
     ALMOST_WHITE = (230, 230, 230)
     MAGENTA = (255, 0, 255)

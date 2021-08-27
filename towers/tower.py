@@ -101,7 +101,7 @@ class Tower:
             else:
                 cls.add_button.color = ColorsRGB.GREEN
         else:
-            cls.add_button.color = ColorsRGB.GREY
+            cls.add_button.color = ColorsRGB.LIGHT_GREY
 
     @classmethod
     def wait_for_find_place(cls, grid, level_copy, win):

@@ -3,7 +3,6 @@ from grid.grid import Grid
 from game.colors import ColorsRGB
 from game.button import Button
 from towers.tower import Tower
-from enemies.enemy import Enemy
 from enemies.waves import waves_of_enemies
 
 
@@ -14,7 +13,10 @@ class Level:
     ]
     builded_towers = []
     enemies = []
-    waiting_enemies = []
+    enemies_to_spawn = []
+
+    SPAWN_ENEMY_EVENT = pygame.USEREVENT + 1
+    pygame.time.set_timer(SPAWN_ENEMY_EVENT, 100)
 
     pygame.time.set_timer(pygame.USEREVENT, 1000)  # One second
     time_of_prepare_phase = 10
@@ -41,7 +43,6 @@ class Level:
 
         Tower.draw_buttons(win)
         cls.grid.draw(win)
-
         if cls.phase == "battle":
             Button(1430, 40, 240, 20, ColorsRGB.GREY,
                    text=f"WAVE: {cls.wave_num}",
@@ -49,10 +50,11 @@ class Level:
             Button(1430, 140, 240, 20, ColorsRGB.GREY,
                    text=f"Living enemies: {len(cls.enemies)}",
                    font_size=25, border=False, font_color=ColorsRGB.DARK_RED).draw(win)
+
             cls.spawn_enemies()
 
             order = cls.draw_and_move_enemies(win)
-            if len(cls.enemies) == 0:
+            if len(cls.enemies) == 0 and len(cls.enemies_to_spawn) == 0:
                 cls.phase = "prepare"
                 if len(waves_of_enemies) <= 0:
                     cls.phase = "won"
@@ -128,16 +130,14 @@ class Level:
             cls.counter = cls.time_of_prepare_phase
             cls.phase = "battle"
             if len(waves_of_enemies) > 0:
-                cls.waiting_enemies = waves_of_enemies[0]()
-                waves_of_enemies.pop(0)
+                cls.enemies_to_spawn = waves_of_enemies[cls.wave_num]
                 cls.wave_num += 1
             else:
                 cls.phase = "won"
 
     @classmethod
     def spawn_enemies(cls):
-        for waiting_enemy in cls.waiting_enemies:
-            is_ready = waiting_enemy.waiting()
-            if is_ready:
-                cls.enemies.append(Enemy(cls.grid.get_path()))
-                cls.waiting_enemies.remove(waiting_enemy)
+        if pygame.event.get(cls.SPAWN_ENEMY_EVENT) and len(cls.enemies_to_spawn) > 0:
+            new_enemy_class = cls.enemies_to_spawn[0]
+            cls.enemies_to_spawn.pop(0)
+            cls.enemies.append(new_enemy_class(cls.grid.get_path()))
