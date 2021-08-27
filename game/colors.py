@@ -3,7 +3,7 @@ class ColorsRGB:
     GREY = (40, 40, 40)
     LIGHT_GREY = (100, 100, 100)
     WHITE = (255, 255, 255)
-    ALMOST_WHITE = (230, 230, 230)
+    ALMOST_WHITE = (200, 200, 200)
     MAGENTA = (255, 0, 255)
     GREEN = (29, 186, 11)
     DARK_GREEN = (29, 120, 11)

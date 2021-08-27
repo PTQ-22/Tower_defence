@@ -30,7 +30,8 @@ class Grid:
         self.moves = [
             (1, 0),
             (0, 1),
-            (-1, 0)
+            (-1, 0),
+            (0, -1)
         ]
         self.dist = []
         self.predecessors = []

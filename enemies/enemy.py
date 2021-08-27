@@ -34,18 +34,22 @@ class Enemy:
             self.path.pop(0)
             if len(self.path) == 0:
                 return False
-            if self.direction == "right":
+            if self.direction == "right" or self.direction == "left":
                 if next_square[0] > self.pos_in_grid[0]:
                     self.direction = "down"
                 elif next_square[0] < self.pos_in_grid[0]:
                     self.direction = "up"
             else:
-                if next_square[1] != self.pos_in_grid[1]:
+                if next_square[1] > self.pos_in_grid[1]:
                     self.direction = "right"
+                elif next_square[1] < self.pos_in_grid[1]:
+                    self.direction = "left"
             self.pos_in_grid = next_square
 
         if self.direction == "right":
             self.x += self.MOVE_SPEED
+        elif self.direction == "left":
+            self.x -= self.MOVE_SPEED
         elif self.direction == "up":
             self.y -= self.MOVE_SPEED
         elif self.direction == "down":
@@ -53,7 +57,7 @@ class Enemy:
         return True
 
     def is_rect_mid(self, grid):
-        if self.direction == "right":
+        if self.direction == "right" or self.direction == "left":
             square_mid_x = grid.start_x + grid.square_size * (self.pos_in_grid[1]) + (grid.square_size // 2)
             if square_mid_x == self.x:
                 return True

@@ -10,7 +10,7 @@ class Tower:
 
     add_button = Button(1460, 420, 180, 20, ColorsRGB.GREEN, text="BUY $10")
     RANGE = 150
-    DAMAGE = 0.1 
+    DAMAGE = 0.1
     PRICE = 10 
 
     def __init__(self, x, y):
@@ -41,7 +41,7 @@ class Tower:
         pygame.draw.circle(win, ColorsRGB.YELLOW, (self.barrel_x, self.barrel_y), 6)
         pygame.draw.circle(win, ColorsRGB.RED, (self.barrel_x, self.barrel_y), 4)
 
-        if self.target.hp <= 0:
+        if self.target.hp <= 0 or self.get_distance_to_enemy(self.target.x, self.target.y) > self.RANGE:
             self.target = None
 
     def move_barrel(self):
@@ -91,8 +91,7 @@ class Tower:
     def draw_buttons(cls, win):
         pygame.draw.rect(win, ColorsRGB.WHITE, (1450, 330, 200, 130), 0, 20)
         pygame.draw.circle(win, ColorsRGB.GREY, (1550, 375), 18.75)
-        pygame.draw.line(win, ColorsRGB.BLACK, (1550, 375),
-                         (1513, 375), 10)
+        pygame.draw.line(win, ColorsRGB.BLACK, (1550, 375), (1513, 375), 10)
         cls.add_button.draw(win)
         if cls.add_button.is_active:
             pos = pygame.mouse.get_pos()
@@ -144,4 +143,3 @@ class Tower:
                     if rect_y < mouse_y < rect_y + grid.square_size:
                         return rect_x // grid.square_size, rect_y // grid.square_size
         return False
-

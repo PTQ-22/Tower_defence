@@ -8,6 +8,7 @@ from enemies.waves import waves_of_enemies
 
 class Level:
     grid = Grid()
+    skip_button = Button(1630, 65, 60, 30, ColorsRGB.WHITE, text="skip", font_size=20)
     towers_to_buy = [
         Tower
     ]
@@ -16,16 +17,15 @@ class Level:
     enemies_to_spawn = []
 
     SPAWN_ENEMY_EVENT = pygame.USEREVENT + 1
-    pygame.time.set_timer(SPAWN_ENEMY_EVENT, 100)
 
     pygame.time.set_timer(pygame.USEREVENT, 1000)  # One second
-    time_of_prepare_phase = 10
+    time_of_prepare_phase = 20
     counter = time_of_prepare_phase
     phase = "prepare"
 
     money = 30
-    lives = 50
-    REWARD = 5
+    lives = 10
+    REWARD = 3
     wave_num = 0
 
     @classmethod
@@ -33,9 +33,14 @@ class Level:
         win.fill(ColorsRGB.GREY)
         pygame.draw.rect(win, ColorsRGB.BROWN, (1430, 250, 240, 650), 0, 10)
         if cls.phase == "prepare":
-            Button(1430, 40, 240, 20, ColorsRGB.GREY,
+            Button(1400, 70, 240, 20, ColorsRGB.GREY,
                    text=f"Time to battle: {cls.counter}",
-                   font_size=33, border=False, font_color=ColorsRGB.WHITE).draw(win)
+                   font_size=24, border=False, font_color=ColorsRGB.WHITE).draw(win)
+            Button(1430, 40, 240, 20, ColorsRGB.GREY,
+                   text=f"WAVE: {cls.wave_num + 1}",
+                   font_size=33, border=False, font_color=ColorsRGB.GREEN).draw(win)
+            cls.skip_button.draw(win)
+
         Button(1430, 200, 240, 20, ColorsRGB.GREY,
                text=f"Money: {cls.money}", font_size=30, border=False, font_color=ColorsRGB.YELLOW).draw(win)
         Button(1430, 250, 240, 20, ColorsRGB.GREY,
@@ -46,7 +51,7 @@ class Level:
         if cls.phase == "battle":
             Button(1430, 40, 240, 20, ColorsRGB.GREY,
                    text=f"WAVE: {cls.wave_num}",
-                   font_size=33, border=False, font_color=ColorsRGB.YELLOW).draw(win)
+                   font_size=33, border=False, font_color=ColorsRGB.GREEN).draw(win)
             Button(1430, 140, 240, 20, ColorsRGB.GREY,
                    text=f"Living enemies: {len(cls.enemies)}",
                    font_size=25, border=False, font_color=ColorsRGB.DARK_RED).draw(win)
@@ -56,7 +61,7 @@ class Level:
             order = cls.draw_and_move_enemies(win)
             if len(cls.enemies) == 0 and len(cls.enemies_to_spawn) == 0:
                 cls.phase = "prepare"
-                if len(waves_of_enemies) <= 0:
+                if cls.wave_num >= len(waves_of_enemies):
                     cls.phase = "won"
             if order == "destroyed":
                 cls.money += cls.REWARD
@@ -96,6 +101,14 @@ class Level:
             if event.type == pygame.QUIT:
                 return -1
 
+            pos = pygame.mouse.get_pos()
+            if cls.skip_button.is_mouse(pos):
+                cls.skip_button.color = ColorsRGB.ALMOST_WHITE
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    cls.counter = 0
+            else:
+                cls.skip_button.color = ColorsRGB.WHITE
+
             if event.type == pygame.USEREVENT and cls.phase == "prepare":
                 cls.start_battle_phase()
             if cls.phase == "prepare" and cls.money >= Tower.PRICE:
@@ -121,16 +134,18 @@ class Level:
                         cls.builded_towers.append(Tower(new_tower_position_items[1], new_tower_position_items[2]))
                         cls.money -= Tower.PRICE
                     else:
+                        print(cls.grid.array_2d)
                         cls.grid.array_2d[rect_idx[1]][rect_idx[0]] = old
 
     @classmethod
     def start_battle_phase(cls):
         cls.counter -= 1
-        if cls.counter == -1:
+        if cls.counter <= -1:
             cls.counter = cls.time_of_prepare_phase
             cls.phase = "battle"
-            if len(waves_of_enemies) > 0:
-                cls.enemies_to_spawn = waves_of_enemies[cls.wave_num]
+            if cls.wave_num < len(waves_of_enemies):
+                cls.enemies_to_spawn, spawn_delay = waves_of_enemies[cls.wave_num]
+                pygame.time.set_timer(cls.SPAWN_ENEMY_EVENT, spawn_delay)
                 cls.wave_num += 1
             else:
                 cls.phase = "won"
