@@ -96,8 +96,12 @@ class Level:
 
             if event.type == pygame.USEREVENT and cls.phase == "prepare":
                 cls.start_battle_phase()
-            if event.type == pygame.MOUSEBUTTONDOWN and cls.phase == "prepare" and cls.money >= Tower.PRICE:
-                cls.build_new_tower(win)
+            if cls.phase == "prepare" and cls.money >= Tower.PRICE:
+                Tower.add_button.is_active = True
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    cls.build_new_tower(win)
+            else:
+                Tower.add_button.is_active = False
 
         return cls
 
@@ -135,6 +139,5 @@ class Level:
         for waiting_enemy in cls.waiting_enemies:
             is_ready = waiting_enemy.waiting()
             if is_ready:
-                print("T")
                 cls.enemies.append(Enemy(cls.grid.get_path()))
                 cls.waiting_enemies.remove(waiting_enemy)

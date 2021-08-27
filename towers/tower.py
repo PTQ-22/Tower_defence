@@ -11,7 +11,7 @@ class Tower:
     add_button = Button(1460, 420, 180, 20, ColorsRGB.GREEN, text="BUY $10")
     RANGE = 150
     DAMAGE = 0.1 
-    PRICE = 10
+    PRICE = 10 
 
     def __init__(self, x, y):
         self.x = x
@@ -94,21 +94,33 @@ class Tower:
         pygame.draw.line(win, ColorsRGB.BLACK, (1550, 375),
                          (1513, 375), 10)
         cls.add_button.draw(win)
-        pos = pygame.mouse.get_pos()
-        if cls.add_button.is_mouse(pos):
-            cls.add_button.color = ColorsRGB.DARK_GREEN
+        if cls.add_button.is_active:
+            pos = pygame.mouse.get_pos()
+            if cls.add_button.is_mouse(pos):
+                cls.add_button.color = ColorsRGB.DARK_GREEN
+            else:
+                cls.add_button.color = ColorsRGB.GREEN
         else:
-            cls.add_button.color = ColorsRGB.GREEN
+            cls.add_button.color = ColorsRGB.GREY
 
     @classmethod
     def wait_for_find_place(cls, grid, level_copy, win):
         clock = pygame.time.Clock()
+        transp_surface = pygame.Surface((1700, 915), pygame.SRCALPHA)
         while True:
             clock.tick(60)
             pos = pygame.mouse.get_pos()
             level_copy.draw(win)
+
+            win.blit(transp_surface, (0, 0))
+            pygame.draw.rect(transp_surface, (0, 0, 0, 0), (0, 0, 1700, 915))
+            pygame.draw.circle(transp_surface, (0, 0, 250, 100), pos, Tower.RANGE, 150)
+
             pygame.draw.circle(win, ColorsRGB.GREY, pos, grid.rect_size / 4)
+            pygame.draw.line(win, ColorsRGB.BLACK, pos,
+                             (pos[0] - 31.5, pos[1]), 10)
             pygame.display.update()
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit(0)
