@@ -7,12 +7,13 @@ class Enemy:
     MOVE_SPEED = 2
     START_X = 40
     IMAGES = [pygame.image.load(f"./images/enemy/enemy_{i+1}.png") for i in range(8)]
+    START_HP = 10
 
     def __init__(self, full_path):
         self.x = self.START_X
         self.y = 460
 
-        self.hp = 10
+        self.hp = self.START_HP
 
         self.pos_in_grid = (6, 0)
         self.direction = "right"

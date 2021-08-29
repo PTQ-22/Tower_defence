@@ -3,6 +3,7 @@ from grid.grid import Grid
 from game.colors import ColorsRGB
 from game.button import Button
 from towers.tower import Tower
+from towers.square_tower import SquareTower
 from enemies.waves import waves_of_enemies
 
 
@@ -10,9 +11,10 @@ class Level:
     grid = Grid()
     skip_button = Button(1630, 65, 60, 30, ColorsRGB.WHITE, text="skip", font_size=20)
     towers_to_buy = [
-        Tower
+        Tower,
+        SquareTower
     ]
-    builded_towers = []
+
     enemies = []
     enemies_to_spawn = []
 
@@ -46,8 +48,14 @@ class Level:
         Button(1430, 250, 240, 20, ColorsRGB.GREY,
                text=f"Allowed Escapes: {cls.lives}", font_size=20, border=False, font_color=ColorsRGB.RED).draw(win)
 
-        Tower.draw_buttons(win)
         cls.grid.draw(win)
+        for tower_class in cls.towers_to_buy:
+            tower_class.draw_buttons(win)
+            for tower in tower_class.builded_towers:
+                tower.draw_on_grid(win)
+                if cls.phase == "battle":
+                    tower.search_for_enemies(cls.enemies)
+
         if cls.phase == "battle":
             Button(1430, 40, 240, 20, ColorsRGB.GREY,
                    text=f"WAVE: {cls.wave_num}",
@@ -69,7 +77,6 @@ class Level:
                 cls.lives -= 1
                 if cls.lives <= 0:
                     cls.phase = "lost"
-            Tower.search_for_enemies(cls.builded_towers, cls.enemies)
 
         elif cls.phase == "won":
             Button(720, 440, 0, 0, ColorsRGB.YELLOW,
@@ -77,9 +84,6 @@ class Level:
         elif cls.phase == "lost":
             Button(720, 440, 0, 0, ColorsRGB.YELLOW,
                    text="YOU LOST", font_size=100, border=False, font_color=ColorsRGB.RED).draw(win)
-
-        for tower in cls.builded_towers:
-            tower.draw_on_grid(win, cls.grid.square_size+5)
 
     @classmethod
     def draw_and_move_enemies(cls, win):
@@ -111,31 +115,33 @@ class Level:
 
             if event.type == pygame.USEREVENT and cls.phase == "prepare":
                 cls.start_battle_phase()
-            if cls.phase == "prepare" and cls.money >= Tower.PRICE:
-                Tower.add_button.is_active = True
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    cls.build_new_tower(win)
-            else:
-                Tower.add_button.is_active = False
+            for tower_class in cls.towers_to_buy:
+                if cls.phase == "prepare" and cls.money - tower_class.PRICE >= 0:
+                    tower_class.add_button.is_active = True
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        cls.build_new_tower(win, tower_class)
+                else:
+                    tower_class.add_button.is_active = False
 
         return cls
 
     @classmethod
-    def build_new_tower(cls, win):
+    def build_new_tower(cls, win, tower_class):
         pos = pygame.mouse.get_pos()
-        for tower in cls.towers_to_buy:
-            if tower.add_button.is_mouse(pos):
-                new_tower_position_items = tower.wait_for_find_place(cls.grid, cls, win)
-                if new_tower_position_items:
-                    rect_idx = new_tower_position_items[0]
-                    old = cls.grid.array_2d[rect_idx[1]][rect_idx[0]]
-                    cls.grid.array_2d[rect_idx[1]][rect_idx[0]] = "t"
-                    if cls.grid.get_path():
-                        cls.builded_towers.append(Tower(new_tower_position_items[1], new_tower_position_items[2]))
-                        cls.money -= Tower.PRICE
-                    else:
-                        print(cls.grid.array_2d)
-                        cls.grid.array_2d[rect_idx[1]][rect_idx[0]] = old
+        if tower_class.add_button.is_mouse(pos):
+            new_tower_position_items = tower_class.wait_for_find_place(cls.grid, cls, win)
+            if new_tower_position_items:
+                rect_idx = new_tower_position_items[0]
+                old = cls.grid.array_2d[rect_idx[1]][rect_idx[0]]
+                cls.grid.array_2d[rect_idx[1]][rect_idx[0]] = "t"
+                if cls.grid.get_path():
+                    tower_class.builded_towers.append(
+                        tower_class(new_tower_position_items[1], new_tower_position_items[2])
+                    )
+                    cls.money -= tower_class.PRICE
+                else:
+                    print(cls.grid.array_2d)
+                    cls.grid.array_2d[rect_idx[1]][rect_idx[0]] = old
 
     @classmethod
     def start_battle_phase(cls):

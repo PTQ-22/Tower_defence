@@ -8,10 +8,14 @@ import math
 
 class Tower:
 
-    add_button = Button(1460, 420, 180, 20, ColorsRGB.GREEN, text="BUY $10")
     RANGE = 150
     DAMAGE = 0.1
-    PRICE = 10 
+    PRICE = 10
+
+    buy_field_y = 330
+    add_button = Button(1460, 420, 180, 20, ColorsRGB.GREEN, text=f"BUY ${PRICE}")
+
+    builded_towers = []
 
     def __init__(self, x, y):
         self.x = x
@@ -26,28 +30,32 @@ class Tower:
         # self.upgrade_button = Button(self.x_middle + 10, self.y_middle + 10, 25, 25, ColorsRGB.GREEN, border=False)
         # self.delete_button = Button(x + 10, self.y_middle + 10, 25, 25, ColorsRGB.RED, border=False)
 
-    def draw_on_grid(self, win, rect_size):
-        pygame.draw.circle(win, ColorsRGB.GREY, (self.x_middle, self.y_middle), rect_size / 4)
-        pygame.draw.line(win, ColorsRGB.BLACK, (self.x_middle, self.y_middle),
-                         (self.barrel_x, self.barrel_y), 10)
-        if type(self.target) == Enemy:
-            self.shoot_to_target(win)
+    @staticmethod  # this method has unused arguments because can be override and other towers may need ex. x, y
+    def draw(win, mid_x, mid_y, barrel_x, barrel_y, x, y, width, height):
+        pygame.draw.circle(win, ColorsRGB.GREY, (mid_x, mid_y), 18.75)
+        pygame.draw.line(win, ColorsRGB.BLACK, (mid_x, mid_y), (barrel_x, barrel_y), 10)
+
+    def draw_on_grid(self, win):
+        self.draw(win, self.x_middle, self.y_middle, self.barrel_x, self.barrel_y,
+                  self.x + 15, self.y + 15, 50, 50)
+        self.shoot_to_target(win)
         # pos = pygame.mouse.get_pos()
         # if self.clickable_area.is_mouse(pos):
         #     self.upgrade_button.draw(win)
         #     self.delete_button.draw(win)
 
     def shoot_to_target(self, win):
-        self.target.hp -= self.DAMAGE
+        if type(self.target) == Enemy:
+            self.target.hp -= self.DAMAGE
 
-        self.move_barrel()
+            self.move_barrel()
 
-        self.target.draw_hit(win)
-        pygame.draw.circle(win, ColorsRGB.YELLOW, (self.barrel_x, self.barrel_y), 6)
-        pygame.draw.circle(win, ColorsRGB.RED, (self.barrel_x, self.barrel_y), 4)
+            self.target.draw_hit(win)
+            pygame.draw.circle(win, ColorsRGB.YELLOW, (self.barrel_x, self.barrel_y), 6)
+            pygame.draw.circle(win, ColorsRGB.RED, (self.barrel_x, self.barrel_y), 4)
 
-        if self.target.hp <= 0 or self.get_distance_to_enemy(self.target.x, self.target.y) > self.RANGE:
-            self.target = None
+            if self.target.hp <= 0 or self.get_distance_to_enemy(self.target.x, self.target.y) > self.RANGE:
+                self.target = None
 
     def move_barrel(self):
 
@@ -81,22 +89,22 @@ class Tower:
     def get_distance_to_enemy(self, enemy_x, enemy_y):
         return math.sqrt((enemy_x - self.x)**2 + (enemy_y - self.y)**2)
 
-    @classmethod
-    def search_for_enemies(cls, towers, enemies):
-        for tower in towers:
-            if not tower.target or tower.get_distance_to_enemy(
-                    tower.target.x + tower.target.width / 2,
-                    tower.target.y + tower.target.height / 2) > cls.RANGE:
-                for enemy in enemies:
-                    dist_to_enemy = tower.get_distance_to_enemy(enemy.x, enemy.y)
-                    if dist_to_enemy <= cls.RANGE:
-                        tower.target = enemy
+    def search_for_enemies(self, enemies):
+        if not self.target or self.get_distance_to_enemy(
+                self.target.x + self.target.width / 2,
+                self.target.y + self.target.height / 2) > self.RANGE:
+            for enemy in enemies:
+                dist_to_enemy = self.get_distance_to_enemy(enemy.x, enemy.y)
+                if dist_to_enemy <= self.RANGE:
+                    print(dist_to_enemy, self.RANGE)
+                    self.target = enemy
 
     @classmethod
     def draw_buttons(cls, win):
-        pygame.draw.rect(win, ColorsRGB.WHITE, (1450, 330, 200, 130), 0, 20)
-        pygame.draw.circle(win, ColorsRGB.GREY, (1550, 375), 18.75)
-        pygame.draw.line(win, ColorsRGB.BLACK, (1550, 375), (1513, 375), 10)
+        pygame.draw.rect(win, ColorsRGB.WHITE, (1450, cls.buy_field_y, 200, 130), 0, 20)
+
+        cls.draw(win, 1550, cls.buy_field_y + 45, 1513, cls.buy_field_y + 45, 1525, cls.buy_field_y + 20, 50, 50)
+
         cls.add_button.draw(win)
         if cls.add_button.is_active:
             pos = pygame.mouse.get_pos()
@@ -118,11 +126,9 @@ class Tower:
 
             win.blit(transp_surface, (0, 0))
             pygame.draw.rect(transp_surface, (0, 0, 0, 0), (0, 0, 1700, 915))
-            pygame.draw.circle(transp_surface, (0, 0, 250, 100), pos, Tower.RANGE, 150)
+            pygame.draw.circle(transp_surface, (0, 0, 250, 100), pos, cls.RANGE, 1000)
 
-            pygame.draw.circle(win, ColorsRGB.GREY, pos, grid.rect_size / 4)
-            pygame.draw.line(win, ColorsRGB.BLACK, pos,
-                             (pos[0] - 31.5, pos[1]), 10)
+            cls.draw(win, pos[0], pos[1], pos[0] - 31.5, pos[1], pos[0] - 25, pos[1] - 25, 50, 50)
             pygame.display.update()
 
             for event in pygame.event.get():
