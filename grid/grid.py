@@ -93,19 +93,8 @@ class Grid:
                     # start = (y, x)
                 elif self.array_2d[y][x] == "e":  # end
                     color = ColorsRGB.GREEN
-                elif self.array_2d[y][x] == "p":
-                    color = ColorsRGB.DARK_RED
-                    # end = (y, x)
                 else:
-                    color = ColorsRGB.WHITE
-
-                # if self.array_2d[y][x] == "t":
-                #     color = ColorsRGB.BLUE
-                #     pygame.draw.rect(win, color, (rect_x, rect_y, self.rect_size, self.rect_size))
-                #     pygame.draw.circle(win, ColorsRGB.GREY,
-                #                        (rect_x + self.rect_size / 2, rect_y + self.rect_size / 2),
-                #                        self.rect_size / 4
-                #                        )
+                    color = ColorsRGB.LIGHT_GREY
                 pygame.draw.rect(win, color, (rect_x, rect_y, self.rect_size, self.rect_size))
 
     def clear_old_path(self):

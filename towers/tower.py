@@ -22,15 +22,20 @@ class Tower:
         self.barrel_y = self.y + 37.5
         self.barrel_move_val = 18.75
         self.target = None
+        # self.clickable_area = Button(x, y, 75, 75, ColorsRGB.WHITE)
+        # self.upgrade_button = Button(self.x_middle + 10, self.y_middle + 10, 25, 25, ColorsRGB.GREEN, border=False)
+        # self.delete_button = Button(x + 10, self.y_middle + 10, 25, 25, ColorsRGB.RED, border=False)
 
     def draw_on_grid(self, win, rect_size):
-        self.x_middle = self.x + 37.5
-        self.y_middle = self.y + 37.5
         pygame.draw.circle(win, ColorsRGB.GREY, (self.x_middle, self.y_middle), rect_size / 4)
         pygame.draw.line(win, ColorsRGB.BLACK, (self.x_middle, self.y_middle),
                          (self.barrel_x, self.barrel_y), 10)
         if type(self.target) == Enemy:
             self.shoot_to_target(win)
+        # pos = pygame.mouse.get_pos()
+        # if self.clickable_area.is_mouse(pos):
+        #     self.upgrade_button.draw(win)
+        #     self.delete_button.draw(win)
 
     def shoot_to_target(self, win):
         self.target.hp -= self.DAMAGE

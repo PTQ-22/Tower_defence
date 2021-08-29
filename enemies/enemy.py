@@ -6,6 +6,7 @@ class Enemy:
 
     MOVE_SPEED = 2
     START_X = 40
+    IMAGES = [pygame.image.load(f"./images/enemy/enemy_{i+1}.png") for i in range(8)]
 
     def __init__(self, full_path):
         self.x = self.START_X
@@ -16,16 +17,27 @@ class Enemy:
         self.pos_in_grid = (6, 0)
         self.direction = "right"
         self.path = full_path
-
         self.width = 10
         self.height = 30
         self.dist_to_new_square_x = 40
         self.dist_to_new_square_y = -10
 
+        self.animation_counter = 0
+
     def draw(self, win):
-        pygame.draw.rect(win, ColorsRGB.YELLOW, (self.x, self.y, self.width, self.height))
+        # pygame.draw.rect(win, ColorsRGB.YELLOW, (self.x, self.y, self.width, self.height))
+        # win.blit(self.IMAGE, (self.x, self.y))
+
+        self.draw_animated(win)
+
         pygame.draw.line(win, ColorsRGB.RED, (self.x - 10, self.y - 5), (self.x + self.width + 10, self.y - 5), 5)
         pygame.draw.line(win, ColorsRGB.GREEN, (self.x - 10, self.y - 5), (self.x + self.hp * 2, self.y - 5), 5)
+
+    def draw_animated(self, win):
+        self.animation_counter += 1
+        if self.animation_counter >= 3 * len(self.IMAGES):
+            self.animation_counter = 0
+        win.blit(self.IMAGES[self.animation_counter // 3], (self.x, self.y))
 
     def move(self, grid):
         rect_mid = self.is_rect_mid(grid)
@@ -71,5 +83,3 @@ class Enemy:
         pygame.draw.circle(win, ColorsRGB.BLACK, (self.x + self.width / 2, self.y + self.height / 2), 10)
         pygame.draw.circle(win, ColorsRGB.YELLOW, (self.x + self.width / 2, self.y + self.height / 2), 4)
         pygame.draw.circle(win, ColorsRGB.RED, (self.x + self.width / 2, self.y + self.height / 2), 2)
-
-
