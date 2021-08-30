@@ -8,12 +8,12 @@ class SquareTower(Tower):
 
     RANGE = 250
     DAMAGE = 10
-    PRICE = 50
+    PRICE = 30
     buy_field_y = 470
     add_button = Button(1460, 560, 180, 20, ColorsRGB.GREEN, text=f"BUY ${PRICE}")
 
     SHOT_EVENT = pygame.USEREVENT + 3
-    pygame.time.set_timer(SHOT_EVENT, 2000)
+    pygame.time.set_timer(SHOT_EVENT, 1200)
 
     def __init__(self, x, y):
         super().__init__(x, y)

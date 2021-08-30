@@ -3,4 +3,3 @@ __pycache__/
 .vscode/
 *.pyc
 TODO.txt
-gen_waves_text.py

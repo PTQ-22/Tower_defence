@@ -40,16 +40,16 @@ class Tower:
         pygame.draw.circle(win, ColorsRGB.GREY, (mid_x, mid_y), 18.75)
         pygame.draw.line(win, ColorsRGB.BLACK, (mid_x, mid_y), (barrel_x, barrel_y), 10)
 
-    def draw_on_grid(self, win):
+    def draw_on_grid(self, win, enemies):
         self.draw(win, self.x_middle, self.y_middle, self.barrel_x, self.barrel_y,
                   self.x + 13, self.y + 13, 50, 50)
-        self.shoot_to_target(win)
+        self.shoot_to_target(win, enemies)
         # pos = pygame.mouse.get_pos()
         # if self.clickable_area.is_mouse(pos):
         #     self.upgrade_button.draw(win)
         #     self.delete_button.draw(win)
 
-    def shoot_to_target(self, win):
+    def shoot_to_target(self, win, enemies):
         if type(self.target) == Enemy:
             self.move_barrel()
             if pygame.event.get(self.SHOT_EVENT):
@@ -58,9 +58,8 @@ class Tower:
             if self.animate_shot:
                 self.shot_animation_counter += 1
                 if self.shot_animation_counter < 40:
+                    self.draw_shot(win)
                     self.target.draw_hit(win)
-                    pygame.draw.circle(win, ColorsRGB.YELLOW, (self.barrel_x, self.barrel_y), 6)
-                    pygame.draw.circle(win, ColorsRGB.RED, (self.barrel_x, self.barrel_y), 4)
                 else:
                     self.animate_shot = False
                     self.shot_animation_counter = 0
@@ -68,8 +67,11 @@ class Tower:
             if self.target.hp <= 0 or self.get_distance_to_enemy(self.target.x, self.target.y) > self.RANGE:
                 self.target = None
 
-    def move_barrel(self):
+    def draw_shot(self, win):
+        pygame.draw.circle(win, ColorsRGB.YELLOW, (self.barrel_x, self.barrel_y), 6)
+        pygame.draw.circle(win, ColorsRGB.RED, (self.barrel_x, self.barrel_y), 4)
 
+    def move_barrel(self):
         if self.target.x < self.x_middle - self.barrel_move_val:  # OK
             if self.target.y < self.y_middle - self.barrel_move_val:
                 self.barrel_y = self.y + 15
@@ -112,10 +114,12 @@ class Tower:
     @classmethod
     def draw_buttons(cls, win):
         pygame.draw.rect(win, ColorsRGB.WHITE, (1450, cls.buy_field_y, 200, 130), 0, 20)
-
         cls.draw(win, 1550, cls.buy_field_y + 45, 1513, cls.buy_field_y + 45, 1525, cls.buy_field_y + 20, 50, 50)
-
         cls.add_button.draw(win)
+        cls.change_buttons_colors()
+
+    @classmethod
+    def change_buttons_colors(cls):
         if cls.add_button.is_active:
             pos = pygame.mouse.get_pos()
             if cls.add_button.is_mouse(pos):

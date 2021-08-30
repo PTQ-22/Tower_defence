@@ -5,6 +5,7 @@ from game.button import Button
 from towers.tower import Tower
 from towers.square_tower import SquareTower
 from towers.laser_tower import LaserTower
+from towers.mortar_tower import MortarTower
 from enemies.waves import waves_of_enemies
 
 
@@ -14,7 +15,8 @@ class Level:
     towers_to_buy = [
         Tower,
         SquareTower,
-        LaserTower
+        LaserTower,
+        MortarTower
     ]
 
     enemies = []
@@ -29,63 +31,59 @@ class Level:
 
     money = 30
     lives = 10
-    REWARD = 3
     wave_num = 0
 
     @classmethod
     def draw(cls, win):
         win.fill(ColorsRGB.GREY)
         pygame.draw.rect(win, ColorsRGB.BROWN, (1430, 250, 240, 650), 0, 10)
-        if cls.phase == "prepare":
-            Button(1400, 70, 240, 20, ColorsRGB.GREY,
-                   text=f"Time to battle: {cls.counter}",
-                   font_size=24, border=False, font_color=ColorsRGB.WHITE).draw(win)
-            Button(1430, 40, 240, 20, ColorsRGB.GREY,
-                   text=f"WAVE: {cls.wave_num + 1}",
-                   font_size=33, border=False, font_color=ColorsRGB.GREEN).draw(win)
-            cls.skip_button.draw(win)
-
-        Button(1430, 200, 240, 20, ColorsRGB.GREY,
-               text=f"Money: {cls.money}", font_size=30, border=False, font_color=ColorsRGB.YELLOW).draw(win)
-        Button(1430, 250, 240, 20, ColorsRGB.GREY,
-               text=f"Allowed Escapes: {cls.lives}", font_size=20, border=False, font_color=ColorsRGB.RED).draw(win)
 
         cls.grid.draw(win)
+
+        cls.draw_buttons(win)
+
         for tower_class in cls.towers_to_buy:
             tower_class.draw_buttons(win)
             for tower in tower_class.builded_towers:
-                tower.draw_on_grid(win)
+                tower.draw_on_grid(win, cls.enemies)
                 if cls.phase == "battle":
                     tower.search_for_enemies(cls.enemies)
 
         if cls.phase == "battle":
-            Button(1430, 40, 240, 20, ColorsRGB.GREY,
-                   text=f"WAVE: {cls.wave_num}",
-                   font_size=33, border=False, font_color=ColorsRGB.GREEN).draw(win)
-            Button(1430, 140, 240, 20, ColorsRGB.GREY,
-                   text=f"Living enemies: {len(cls.enemies)}",
-                   font_size=25, border=False, font_color=ColorsRGB.DARK_RED).draw(win)
-
             cls.spawn_enemies()
-
             order = cls.draw_and_move_enemies(win)
             if len(cls.enemies) == 0 and len(cls.enemies_to_spawn) == 0:
                 cls.phase = "prepare"
                 if cls.wave_num >= len(waves_of_enemies):
                     cls.phase = "won"
-            if order == "destroyed":
-                cls.money += cls.REWARD
-            elif order == "out":
+            if order == "out":
                 cls.lives -= 1
                 if cls.lives <= 0:
                     cls.phase = "lost"
 
+    @classmethod
+    def draw_buttons(cls, win):
+        Button(1430, 200, 240, 20, ColorsRGB.GREY, text=f"Money: {cls.money}", font_size=30, border=False,
+               font_color=ColorsRGB.YELLOW).draw(win)
+        Button(1430, 250, 240, 20, ColorsRGB.GREY, text=f"Allowed Escapes: {cls.lives}", font_size=20, border=False,
+               font_color=ColorsRGB.RED).draw(win)
+        if cls.phase == "prepare":
+            Button(1400, 70, 240, 20, ColorsRGB.GREY, text=f"Time to battle: {cls.counter}", font_size=24, border=False,
+                   font_color=ColorsRGB.WHITE).draw(win)
+            Button(1430, 40, 240, 20, ColorsRGB.GREY, text=f"WAVE: {cls.wave_num + 1}", font_size=33, border=False,
+                   font_color=ColorsRGB.GREEN).draw(win)
+            cls.skip_button.draw(win)
+        elif cls.phase == "battle":
+            Button(1430, 40, 240, 20, ColorsRGB.GREY, text=f"WAVE: {cls.wave_num}", font_size=33, border=False,
+                   font_color=ColorsRGB.GREEN).draw(win)
+            Button(1430, 140, 240, 20, ColorsRGB.GREY, text=f"Living enemies: {len(cls.enemies)}", font_size=25,
+                   border=False, font_color=ColorsRGB.DARK_RED).draw(win)
         elif cls.phase == "won":
-            Button(720, 440, 0, 0, ColorsRGB.YELLOW,
-                   text="YOU WON", font_size=100, border=False, font_color=ColorsRGB.GREEN).draw(win)
+            Button(720, 440, 0, 0, ColorsRGB.YELLOW, text="YOU WON", font_size=100, border=False,
+                   font_color=ColorsRGB.GREEN).draw(win)
         elif cls.phase == "lost":
-            Button(720, 440, 0, 0, ColorsRGB.YELLOW,
-                   text="YOU LOST", font_size=100, border=False, font_color=ColorsRGB.RED).draw(win)
+            Button(720, 440, 0, 0, ColorsRGB.YELLOW, text="YOU LOST", font_size=100, border=False,
+                   font_color=ColorsRGB.RED).draw(win)
 
     @classmethod
     def draw_and_move_enemies(cls, win):
@@ -97,6 +95,7 @@ class Level:
                 cls.enemies.remove(enemy)
                 if enemy.hp <= 0:
                     order = "destroyed"
+                    cls.money += enemy.REWARD
                 if not is_enemy_moving:
                     order = "out"
         return order

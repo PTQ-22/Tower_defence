@@ -24,7 +24,7 @@ class LaserTower(Tower):
         pygame.draw.circle(win, ColorsRGB.BLACK, (mid_x, mid_y), 12)
         pygame.draw.circle(win, ColorsRGB.RED, (mid_x, mid_y), 3)
 
-    def shoot_to_target(self, win):
+    def shoot_to_target(self, win, enemies):
         if type(self.target) == Enemy:
             self.target.hp -= self.DAMAGE
 
