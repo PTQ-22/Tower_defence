@@ -8,6 +8,7 @@ class ColorsRGB:
     GREEN = (29, 186, 11)
     DARK_GREEN = (29, 120, 11)
     RED = (255, 0, 0)
+    ORANGE = (255, 165, 0)
     DARK_RED = (155, 0, 0)
     BLUE = (0, 0, 200)
     YELLOW = (255, 242, 0)

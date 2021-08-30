@@ -4,7 +4,7 @@ from game.colors import ColorsRGB
 
 class Enemy:
 
-    MOVE_SPEED = 2
+    MOVE_SPEED = 1
     START_X = 40
     IMAGES = [pygame.image.load(f"./images/enemy/enemy_{i+1}.png") for i in range(8)]
     START_HP = 10

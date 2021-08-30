@@ -4,6 +4,7 @@ from game.colors import ColorsRGB
 from game.button import Button
 from towers.tower import Tower
 from towers.square_tower import SquareTower
+from towers.laser_tower import LaserTower
 from enemies.waves import waves_of_enemies
 
 
@@ -12,7 +13,8 @@ class Level:
     skip_button = Button(1630, 65, 60, 30, ColorsRGB.WHITE, text="skip", font_size=20)
     towers_to_buy = [
         Tower,
-        SquareTower
+        SquareTower,
+        LaserTower
     ]
 
     enemies = []

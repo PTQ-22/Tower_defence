@@ -9,13 +9,16 @@ import math
 class Tower:
 
     RANGE = 150
-    DAMAGE = 0.1
+    DAMAGE = 3
     PRICE = 10
 
     buy_field_y = 330
     add_button = Button(1460, 420, 180, 20, ColorsRGB.GREEN, text=f"BUY ${PRICE}")
 
     builded_towers = []
+
+    SHOT_EVENT = pygame.USEREVENT + 2
+    pygame.time.set_timer(SHOT_EVENT, 500)
 
     def __init__(self, x, y):
         self.x = x
@@ -26,6 +29,8 @@ class Tower:
         self.barrel_y = self.y + 37.5
         self.barrel_move_val = 18.75
         self.target = None
+        self.shot_animation_counter = 0
+        self.animate_shot = False
         # self.clickable_area = Button(x, y, 75, 75, ColorsRGB.WHITE)
         # self.upgrade_button = Button(self.x_middle + 10, self.y_middle + 10, 25, 25, ColorsRGB.GREEN, border=False)
         # self.delete_button = Button(x + 10, self.y_middle + 10, 25, 25, ColorsRGB.RED, border=False)
@@ -37,7 +42,7 @@ class Tower:
 
     def draw_on_grid(self, win):
         self.draw(win, self.x_middle, self.y_middle, self.barrel_x, self.barrel_y,
-                  self.x + 15, self.y + 15, 50, 50)
+                  self.x + 13, self.y + 13, 50, 50)
         self.shoot_to_target(win)
         # pos = pygame.mouse.get_pos()
         # if self.clickable_area.is_mouse(pos):
@@ -46,13 +51,19 @@ class Tower:
 
     def shoot_to_target(self, win):
         if type(self.target) == Enemy:
-            self.target.hp -= self.DAMAGE
-
             self.move_barrel()
-
-            self.target.draw_hit(win)
-            pygame.draw.circle(win, ColorsRGB.YELLOW, (self.barrel_x, self.barrel_y), 6)
-            pygame.draw.circle(win, ColorsRGB.RED, (self.barrel_x, self.barrel_y), 4)
+            if pygame.event.get(self.SHOT_EVENT):
+                self.target.hp -= self.DAMAGE
+                self.animate_shot = True
+            if self.animate_shot:
+                self.shot_animation_counter += 1
+                if self.shot_animation_counter < 40:
+                    self.target.draw_hit(win)
+                    pygame.draw.circle(win, ColorsRGB.YELLOW, (self.barrel_x, self.barrel_y), 6)
+                    pygame.draw.circle(win, ColorsRGB.RED, (self.barrel_x, self.barrel_y), 4)
+                else:
+                    self.animate_shot = False
+                    self.shot_animation_counter = 0
 
             if self.target.hp <= 0 or self.get_distance_to_enemy(self.target.x, self.target.y) > self.RANGE:
                 self.target = None
@@ -96,7 +107,6 @@ class Tower:
             for enemy in enemies:
                 dist_to_enemy = self.get_distance_to_enemy(enemy.x, enemy.y)
                 if dist_to_enemy <= self.RANGE:
-                    print(dist_to_enemy, self.RANGE)
                     self.target = enemy
 
     @classmethod
