@@ -20,12 +20,13 @@ class Enemy:
         self.path = full_path
         self.width = 10
         self.height = 30
-        self.dist_to_new_square_x = 40
-        self.dist_to_new_square_y = -10
         self.animation_counter = 0
 
     def draw(self, win):
         self.draw_animated(win)
+        self.draw_hp_bar(win)
+
+    def draw_hp_bar(self, win):
         pygame.draw.line(win, ColorsRGB.RED, (self.x - 6, self.y - 5),
                          (self.x + self.START_HP * self.hp_bar_multiplier, self.y - 5), 5)
         pygame.draw.line(win, ColorsRGB.GREEN, (self.x - 6, self.y - 5),
@@ -74,13 +75,21 @@ class Enemy:
         return True
 
     def is_rect_mid(self, grid):
-        if self.direction == "right" or self.direction == "left":
+        if self.direction == "right":
             square_mid_x = grid.start_x + grid.square_size * (self.pos_in_grid[1]) + (grid.square_size // 2)
-            if square_mid_x == self.x:
+            if square_mid_x <= self.x + self.width / 2:
                 return True
-        else:
+        if self.direction == "left":
+            square_mid_x = grid.start_x + grid.square_size * (self.pos_in_grid[1]) + (grid.square_size // 2)
+            if square_mid_x >= self.x + self.width / 2:
+                return True
+        elif self.direction == "up":
             square_mid_y = grid.start_y + grid.square_size * (self.pos_in_grid[0]) + (grid.square_size // 2)
-            if square_mid_y == self.y:
+            if square_mid_y >= self.y + self.height / 2:
+                return True
+        elif self.direction == "down":
+            square_mid_y = grid.start_y + grid.square_size * (self.pos_in_grid[0]) + (grid.square_size // 2)
+            if square_mid_y <= self.y + self.height / 2:
                 return True
         return False
 

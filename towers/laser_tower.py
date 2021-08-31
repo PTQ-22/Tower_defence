@@ -2,7 +2,6 @@ import pygame
 from .tower import Tower
 from game.button import Button
 from game.colors import ColorsRGB
-from enemies.enemy import Enemy
 
 
 class LaserTower(Tower):
@@ -25,7 +24,7 @@ class LaserTower(Tower):
         pygame.draw.circle(win, ColorsRGB.RED, (mid_x, mid_y), 3)
 
     def shoot_to_target(self, win, enemies):
-        if type(self.target) == Enemy:
+        if self.target is not None:
             self.target.hp -= self.DAMAGE
 
             self.draw_laser(win)

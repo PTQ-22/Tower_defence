@@ -1,7 +1,6 @@
 import pygame
 from game.button import Button
 from game.colors import ColorsRGB
-from enemies.enemy import Enemy
 import sys
 import math
 
@@ -50,7 +49,7 @@ class Tower:
         #     self.delete_button.draw(win)
 
     def shoot_to_target(self, win, enemies):
-        if type(self.target) == Enemy:
+        if self.target is not None:
             self.move_barrel()
             if pygame.event.get(self.SHOT_EVENT):
                 self.target.hp -= self.DAMAGE

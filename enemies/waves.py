@@ -1,4 +1,5 @@
 from .enemy import Enemy
+from .vehicle_enemy import VehicleEnemy
 
 waves_of_enemies = []
 
@@ -18,7 +19,8 @@ def append_to_waves(func):
 
 @append_to_waves
 def wave_1():
-    return [Enemy for _ in range(4)], 250
+    enemies = [VehicleEnemy, Enemy]
+    return enemies, 250
 
 
 @append_to_waves
