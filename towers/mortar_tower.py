@@ -2,6 +2,7 @@ import pygame
 from .tower import Tower
 from game.button import Button
 from game.colors import ColorsRGB
+from enemies.fly_enemy import FlyEnemy
 import math
 
 
@@ -30,7 +31,7 @@ class MortarTower(Tower):
         pygame.draw.circle(win, ColorsRGB.GREY, (mid_x, mid_y), 12)
 
     def shoot_to_target(self, win, enemies):
-        if self.target is not None:
+        if self.target is not None and type(self.target) != FlyEnemy:
             self.shot_counter += 1
             if self.shot_counter >= 500:
                 self.shot_counter = 0

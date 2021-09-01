@@ -34,4 +34,5 @@ class LaserTower(Tower):
 
     def draw_laser(self, win):
         pygame.draw.line(win, ColorsRGB.ORANGE, (self.x_middle, self.y_middle),
-                         (self.target.x + self.target.width / 2, self.target.y + self.target.height / 2), 7)
+                         (self.target.x - self.target.x_and_y_back + self.target.width / 2,
+                          self.target.y - self.target.x_and_y_back + self.target.height / 2), 7)

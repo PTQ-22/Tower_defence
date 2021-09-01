@@ -29,8 +29,8 @@ class Level:
     counter = time_of_prepare_phase
     phase = "prepare"
 
-    money = 300
-    lives = 10
+    money = 30
+    lives = 20
     wave_num = 0
 
     @classmethod
