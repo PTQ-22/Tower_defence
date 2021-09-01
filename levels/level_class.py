@@ -29,7 +29,7 @@ class Level:
     counter = time_of_prepare_phase
     phase = "prepare"
 
-    money = 30
+    money = 300
     lives = 20
     wave_num = 0
 

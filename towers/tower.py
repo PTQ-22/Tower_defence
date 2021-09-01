@@ -16,9 +16,6 @@ class Tower:
 
     builded_towers = []
 
-    SHOT_EVENT = pygame.USEREVENT + 2
-    pygame.time.set_timer(SHOT_EVENT, 500)
-
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -30,6 +27,8 @@ class Tower:
         self.target = None
         self.shot_animation_counter = 0
         self.animate_shot = False
+        self.shot_break = 150
+        self.shot_counter = 50
         # self.clickable_area = Button(x, y, 75, 75, ColorsRGB.WHITE)
         # self.upgrade_button = Button(self.x_middle + 10, self.y_middle + 10, 25, 25, ColorsRGB.GREEN, border=False)
         # self.delete_button = Button(x + 10, self.y_middle + 10, 25, 25, ColorsRGB.RED, border=False)
@@ -51,7 +50,9 @@ class Tower:
     def shoot_to_target(self, win, enemies):
         if self.target is not None:
             self.move_barrel()
-            if pygame.event.get(self.SHOT_EVENT):
+            self.shot_counter += 1
+            if self.shot_counter >= self.shot_break:
+                self.shot_counter = 0
                 self.target.hp -= self.DAMAGE
                 self.animate_shot = True
             if self.animate_shot:
