@@ -1,5 +1,6 @@
 from .enemy import Enemy
 from .vehicle_enemy import VehicleEnemy
+from .big_enemy import BigEnemy
 
 waves_of_enemies = []
 
@@ -19,7 +20,7 @@ def append_to_waves(func):
 
 @append_to_waves
 def wave_1():
-    enemies = [VehicleEnemy, Enemy]
+    enemies = [BigEnemy, Enemy, VehicleEnemy]
     return enemies, 250
 
 

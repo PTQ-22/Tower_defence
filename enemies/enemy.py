@@ -21,22 +21,25 @@ class Enemy:
         self.width = 10
         self.height = 30
         self.animation_counter = 0
+        self.x_and_y_back = 0
 
     def draw(self, win):
         self.draw_animated(win)
         self.draw_hp_bar(win)
 
     def draw_hp_bar(self, win):
-        pygame.draw.line(win, ColorsRGB.RED, (self.x - 6, self.y - 5),
-                         (self.x + self.START_HP * self.hp_bar_multiplier, self.y - 5), 5)
-        pygame.draw.line(win, ColorsRGB.GREEN, (self.x - 6, self.y - 5),
-                         (self.x + self.hp * self.hp_bar_multiplier, self.y - 5), 5)
+        pygame.draw.line(win, ColorsRGB.RED, (self.x - 6 - self.x_and_y_back, self.y - 5 - self.x_and_y_back),
+                         (self.x + self.START_HP * self.hp_bar_multiplier - self.x_and_y_back,
+                          self.y - 5 - self.x_and_y_back), 5)
+        pygame.draw.line(win, ColorsRGB.GREEN, (self.x - 6 - self.x_and_y_back, self.y - 5 - self.x_and_y_back),
+                         (self.x + self.hp * self.hp_bar_multiplier - self.x_and_y_back,
+                          self.y - 5 - self.x_and_y_back), 5)
 
     def draw_animated(self, win):
         self.animation_counter += 1
         if self.animation_counter >= 3 * len(self.IMAGES):
             self.animation_counter = 0
-        win.blit(self.IMAGES[self.animation_counter // 3], (self.x, self.y))
+        win.blit(self.IMAGES[self.animation_counter // 3], (self.x - self.x_and_y_back, self.y - self.x_and_y_back))
 
     def move(self, grid):
         moving = self.change_direction(grid)
